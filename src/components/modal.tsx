@@ -28,7 +28,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
       return
     }
 
-    if(!name) {
+    if (!name) {
       alert("Debes poner un nombre al equipo.")
       return
     }
@@ -41,7 +41,6 @@ const Modal = ({ setShowModal }: ModalProps) => {
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const handleSearch = (search: string) => {
-    console.log(search);
     if (search.length < 3) {
       setResultSearch([]);
       return
@@ -57,7 +56,6 @@ const Modal = ({ setShowModal }: ModalProps) => {
         try {
           const response = await fetch(`https://apiv3.apifootball.com/?action=get_players&player_name=${search}&APIkey=69a2653735269481d6536aae845b37ae6e63084c8f3d8e0aa154ab37f95b6069`);
           const data = await response.json();
-          console.log("data: ", data);
 
           setResultSearch(data.slice(0, 10));
         } catch (err) {
@@ -85,11 +83,19 @@ const Modal = ({ setShowModal }: ModalProps) => {
     setMembers([...members, { id: player.player_id, name: player.player_name, image: player.player_image }])
   }
 
+  const handleDeleteMember = (id: string) => {
+    setMembers(
+      members.filter(a =>
+        a.id !== id
+      )
+    );
+  }
+
   return (
     <div className='blurModal'>
-      <div className='modalContainer bg-gray-100' ref={popup}>
+      <div className='modalContainer bg-gray-100 w-[80%] lg:w-[50%]' ref={popup}>
         <div className='flex flex-col items-center py-4 px-10'>
-          <h2 className='text-2xl mb-2'>Arma Tu Equipo</h2>
+          <h2 className='text-2xl mb-2 text-center'>Arma Tu Equipo</h2>
           <input className='w-full p-2 outline-none mb-2' value={name} onChange={(e) => setName(e.target.value)} placeholder='Nombre del Equipo' />
           <input className='w-full p-2 outline-none mb-2' onChange={(e) => handleSearch(e.target.value)} placeholder='Buscar Jugador' />
 
@@ -111,11 +117,14 @@ const Modal = ({ setShowModal }: ModalProps) => {
 
             {
               members.length > 0 && (
-                <div className="rounded-lg bg-white w-full flex items-center justify-center gap-3 p-2 my-4">
+                <div className="rounded-lg bg-white w-full flex items-center justify-center gap-3 p-2 my-4 scrollbar overflow-x-auto">
                   {
                     members.map(member => (
-                      <div key={member.id} className="border-gray-300 bg-gray-300 flex items-center gap-3 px-1 py-1 mb-1 cursor-pointer">
-                        <img className=' w-[60px] h-[60px]' src={member.image} alt='' />
+                      <div key={member.id} onClick={() => handleDeleteMember(member.id)} className="border-gray-300 bg-gray-300 flex items-center gap-3 px-1 py-1 mb-1 cursor-pointer">
+                        <div className="flex flex-col items-center justify-center">
+                          <img className=' w-[60px] h-[60px]' src={member.image} alt='' />
+                          <span className='text-sm text-center'>{member.name}</span>
+                        </div>
                       </div>
                     ))
                   }
@@ -123,7 +132,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
               )
             }
 
-            <button onClick={handleAddTeam} className="hover:bg-gray-300  border-b border-gray-300 pb-6 lg:static lg:w-auto  lg:rounded-lg lg:border lg:bg-gray-200 lg:px-5 lg:py-3 mb-4">
+            <button onClick={handleAddTeam} className="hover:bg-gray-300  static w-auto  rounded-lg border bg-gray-200 px-5 py-3 mb-4">
               Guardar
             </button>
           </div>
