@@ -5,6 +5,6 @@
 
 2 - Ejecutar con: npm run dev
 
-3 - Abrir navegador y ver app en: [http://localhost:3000](http://localhost:3000)
+3 - Abrir navegador y ver app en: http://localhost:3000
 ```
 

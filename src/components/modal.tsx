@@ -4,6 +4,7 @@ import useClickOutside from '@/utils/clickOutside';
 import React, { useRef, useState } from 'react'
 import './style.css'
 import { Member, useTeamStore } from '@/store/teams';
+import MessageError from './messageError';
 
 interface ModalProps {
   setShowModal: (value: boolean) => void;
@@ -17,6 +18,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
   const [name, setName] = useState('')
   const [members, setMembers] = useState<Member[]>([]);
   const [resultSearch, setResultSearch] = useState([])
+  const [msgError, setMsgError] = useState('')
 
   const players = useTeamStore((state) => state.players);
   const addMember = useTeamStore((state) => state.addMember);
@@ -24,12 +26,12 @@ const Modal = ({ setShowModal }: ModalProps) => {
 
   const handleAddTeam = () => {
     if (teams.length === 2) {
-      alert("Solo puedes crear 2 equipos.")
+      setMsgError("Solo puedes crear 2 equipos.")
       return
     }
 
     if (!name) {
-      alert("Debes poner un nombre al equipo.")
+      setMsgError("Debes poner un nombre al equipo.")
       return
     }
 
@@ -67,17 +69,17 @@ const Modal = ({ setShowModal }: ModalProps) => {
 
   const handleAddPlayer = (player: any) => {
     if (members.length === 5) {
-      alert("Solo se puede seleccionar 5 jugadores.")
+      setMsgError("Solo se puede seleccionar 5 jugadores.")
       return
     }
     const existMemberSelected = members.find(selected => selected.id == player.player_id)
     if (existMemberSelected) {
-      alert("No se puede agregar el mismo jugador.")
+      setMsgError("No se puede agregar el mismo jugador.")
       return
     }
     const existMember = players.find(id => id == player.player_id)
     if (existMember) {
-      alert("No se puede agregar el mismo jugador en los 2 equipos.")
+      setMsgError("No se puede agregar el mismo jugador en los 2 equipos.")
       return
     }
     setMembers([...members, { id: player.player_id, name: player.player_name, image: player.player_image }])
@@ -136,9 +138,10 @@ const Modal = ({ setShowModal }: ModalProps) => {
               Guardar
             </button>
           </div>
-
         </div>
-
+        {
+          msgError && <MessageError msg={msgError} setMsg={setMsgError} />
+        }
       </div>
     </div>
   )

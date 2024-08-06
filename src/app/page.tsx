@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import Modal from "@/components/modal";
 import { Team, useTeamStore } from "@/store/teams";
 import ModalEdit from "@/components/modalEdit";
+import Welcome from "@/components/Welcome";
 
 export default function Home() {
+  const [welcome, setWelcome] = useState(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setWelcome(false)
+    }, 3000)
+  }, [])
+
   const teams = useTeamStore((state) => state.teams);
   const removeTeam = useTeamStore((state) => state.removeTeam);
   const removeMember = useTeamStore((state) => state.removeMember);
@@ -28,7 +37,7 @@ export default function Home() {
   }
 
   const handleDeleteTeam = (name: string) => {
-    const players = teams.find((team) => team.name !== name)
+    const players = teams.find((team) => team.name === name)
     players?.members?.map(player => removeMember(player.id))
     removeTeam(name);
   }
@@ -43,7 +52,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="flex flex-col w-full lg:max-w-5xl lg:flex-row gap-2">
+      <div className="flex flex-col w-[90vw] lg:max-w-5xl lg:flex-row gap-2">
         <div className="rounded-lg  px-5 py-4 border-gray-100 bg-gray-100 flex-1 h-[200px]">
           <h1 className="text-center mb-2">Listado De Equipos</h1>
           {
@@ -93,6 +102,9 @@ export default function Home() {
       }
       {
         showModalEdit && <ModalEdit setShowModal={setShowModalEdit} teamSelected={teamSelected} />
+      }
+      {
+        welcome && <Welcome />
       }
     </main>
   );
